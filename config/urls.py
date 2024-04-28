@@ -1,7 +1,8 @@
 from django.urls import path, include
 from rest_framework import routers
-from myproject.user_management.views import UserViewSet
+
 from myproject.courses.views import CourseViewSet, LessonListCreate, LessonRetrieveUpdateDestroy
+from myproject.user_management.views import UserViewSet
 
 router = routers.DefaultRouter()
 router.register('users', UserViewSet)
