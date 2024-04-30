@@ -2,7 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import User
 
-from myproject.courses.models import Course, Lesson
+from courses.models import Course, Lesson
+
 
 
 class CustomUserManager(BaseUserManager):
