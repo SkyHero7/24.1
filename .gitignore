@@ -1,0 +1,13 @@
+venv/
+env/
+
+.vscode/
+../.idea/
+*.sublime-project
+*.sublime-workspace
+
+logs/
+*.log
+*.crash
+
+/.env
