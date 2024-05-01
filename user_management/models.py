@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.contrib.auth.models import User
 
-from courses.models import Course, Lesson
 
 
 
@@ -36,10 +34,3 @@ class CustomUser(AbstractBaseUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['phone', 'city']
 
-class Payment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    payment_date = models.DateField()
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, null=True, blank=True)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_method = models.CharField(max_length=100)
