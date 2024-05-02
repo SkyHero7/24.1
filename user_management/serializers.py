@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import CustomUser
-from .models import Payment
+from myproject.courses.models import Payment
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
