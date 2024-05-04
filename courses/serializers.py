@@ -3,16 +3,15 @@ from .models import Course, Lesson
 
 
 class LessonSerializer(serializers.ModelSerializer):
-    video_link = serializers.CharField(source='video_url')
 
     class Meta:
         model = Lesson
-        fields = ['id', 'name', 'description', 'preview', 'video_url', 'course']
+        fields = ['id', 'name', 'description', 'preview', 'video_link', 'course']
 
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    lessons = LessonSerializer(many=True)
+    lessons = LessonSerializer(many=True, read_only=True)
     lessons_count = serializers.SerializerMethodField()
 
     def get_lessons_count(self, course):
@@ -20,7 +19,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ['id', 'name', 'description', 'lessons']
+        fields = ['id', 'name', 'description', 'lessons', 'lessons_count']
 
 
 class PaymentSerializer:
