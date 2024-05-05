@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 class Course(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Lesson(models.Model):
     name = models.CharField(max_length=100)
@@ -12,6 +13,7 @@ class Lesson(models.Model):
     description = models.TextField()
     preview = models.ImageField(upload_to='lesson_previews/')
     video_link = models.URLField()
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Payment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
