@@ -1,7 +1,14 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 from .views import UserViewSet
+from .apps import UserManagementConfig
 
-urlpatterns = [
-    path('users/', UserViewSet.as_view({'get': 'list'}), name='user-list'),
+app_name = UserManagementConfig.name
 
-]
+router = DefaultRouter()
+router.register(
+    r'users',
+    UserViewSet,
+    basename='course'
+)
+
+urlpatterns = [] + router.urls
