@@ -21,13 +21,5 @@ class PaymentList(generics.ListAPIView):
     ordering_fields = ['payment_date']
     filterset_fields = ['course', 'lesson', 'payment_method']
 
-class UserListCreate(generics.ListCreateAPIView):
-    queryset = CustomUser.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
 
-class UserRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
-    queryset = CustomUser.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
 
