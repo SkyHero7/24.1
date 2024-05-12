@@ -7,7 +7,7 @@ from .models import Payment
 from .serializers import PaymentSerializer
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from myproject.permissions import IsOwner
+from permissions import IsOwner
 
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()

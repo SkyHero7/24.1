@@ -1,14 +1,16 @@
 from rest_framework import serializers
-from .models import CustomUser
-from myproject.courses.models import Payment
+from django.contrib.auth import get_user_model
+from courses.models import Payment
+
+User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CustomUser
+        model = User
         fields = ['id', 'email', 'phone', 'city', 'avatar']
 
     def create(self, validated_data):
-        user = CustomUser.objects.create_user(**validated_data)
+        user = User.objects.create_user(**validated_data)
         return user
 
 class PaymentSerializer(serializers.ModelSerializer):

@@ -1,12 +1,12 @@
 from .serializers import UserSerializer
 from rest_framework import filters
-from myproject.courses.models import Payment
+from courses.models import Payment
 from .serializers import PaymentSerializer
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .models import CustomUser
 from rest_framework import viewsets, permissions
-from myproject.permissions import IsModerator
+from permissions import IsModerator
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
