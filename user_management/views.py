@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
@@ -42,3 +43,9 @@ class UserListView(APIView):
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
 
+class MyView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({'message': 'Этот эндпоинт закрыт авторизацией'})
