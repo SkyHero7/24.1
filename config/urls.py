@@ -4,6 +4,7 @@ from user_management.models import UserListCreate, UserRetrieveUpdateDestroy
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from user_management.views import MyView
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('user_management.urls', namespace='users')),
