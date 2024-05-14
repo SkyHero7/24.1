@@ -1,4 +1,7 @@
+from rest_framework.viewsets import ModelViewSet
+
 from courses.serializers import CourseSerializer
+from .paginators import CustomPageNumberPagination
 from .serializers import UserSerializer
 from rest_framework import filters
 from courses.models import Payment, Course
@@ -8,10 +11,11 @@ from rest_framework.permissions import IsAuthenticated, DjangoModelPermissionsOr
 from .models import CustomUser
 from rest_framework import viewsets, permissions
 from user_management.permissions import IsModerator
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-
+from rest_framework import status
+from .models import Subscription
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
@@ -60,3 +64,25 @@ class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     permission_classes = [IsAuthenticated, DjangoModelPermissionsOrAnonReadOnly | IsModeratorOrReadOnly]
+
+
+class SubscriptionAPIView(APIView):
+    def post(self, request):
+        user = request.user
+        course_id = request.data.get('course_id')
+        course = Course.objects.get(pk=course_id)
+
+        subscription, created = Subscription.objects.get_or_create(user=user, course=course)
+
+        if created:
+            message = 'Subscription added successfully.'
+        else:
+            subscription.delete()
+            message = 'Subscription removed successfully.'
+
+        return Response({'message': message}, status=status.HTTP_200_OK)
+
+class CourseViewSet(ModelViewSet):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+    pagination_class = CustomPageNumberPagination

@@ -1,7 +1,8 @@
-from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
+from django.db import models
+from courses.models import Course
 
 from user_management.serializers import UserSerializer
 
@@ -45,3 +46,24 @@ class UserRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+
+class Subscription(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+class Lesson(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    video_url = models.URLField()
+    course = models.ForeignKey('Course', related_name='lessons', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
+
+class Course(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    # Добавьте другие поля, если необходимо
+
+    def __str__(self):
+        return self.title
