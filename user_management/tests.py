@@ -2,8 +2,8 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
-from .models import Lesson
-from .serializers import LessonSerializer
+from courses.models import Lesson
+
 
 class LessonAPITest(TestCase):
     def setUp(self):

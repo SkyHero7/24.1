@@ -1,6 +1,8 @@
 from rest_framework import generics, viewsets, permissions
 from rest_framework.response import Response
 from rest_framework import status
+
+from . import filters
 from .models import Course, Lesson
 from .serializers import CourseSerializer, LessonSerializer
 from .models import Payment
@@ -51,3 +53,9 @@ class LessonRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsOwner]
+
+class PaymentList(generics.ListAPIView):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+    ordering_fields = ['payment_date']
+    filterset_fields = ['course', 'lesson', 'payment_method']

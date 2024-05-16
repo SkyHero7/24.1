@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.urls import path, include
-from user_management.models import UserListCreate, UserRetrieveUpdateDestroy
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from user_management.views import MyView, SubscriptionAPIView
 

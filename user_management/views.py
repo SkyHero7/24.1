@@ -3,9 +3,7 @@ from rest_framework.viewsets import ModelViewSet
 from courses.serializers import CourseSerializer
 from .paginators import CustomPageNumberPagination
 from .serializers import UserSerializer
-from rest_framework import filters
-from courses.models import Payment, Course
-from .serializers import PaymentSerializer
+from courses.models import Course
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissionsOrAnonReadOnly
 from .models import CustomUser
@@ -28,12 +26,7 @@ class UserViewSet(viewsets.ModelViewSet):
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
 
-class PaymentList(generics.ListAPIView):
-    queryset = Payment.objects.all()
-    serializer_class = PaymentSerializer
-    filter_backends = [filters.OrderingFilter]
-    ordering_fields = ['payment_date']
-    filterset_fields = ['course', 'lesson', 'payment_method']
+
 
 
 class UserListView(APIView):
@@ -56,14 +49,12 @@ class MyView(APIView):
         return Response({'message': 'Этот эндпоинт закрыт авторизацией'})
 
 
-class IsModeratorOrReadOnly:
-    pass
 
 
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = [IsAuthenticated, DjangoModelPermissionsOrAnonReadOnly | IsModeratorOrReadOnly]
+    permission_classes = [IsAuthenticated, DjangoModelPermissionsOrAnonReadOnly ]
 
 
 class SubscriptionAPIView(APIView):
@@ -86,3 +77,13 @@ class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     pagination_class = CustomPageNumberPagination
+
+class UserListCreate(generics.ListCreateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+class UserRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
