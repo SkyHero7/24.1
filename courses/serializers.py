@@ -1,14 +1,15 @@
 from rest_framework import serializers
 from .models import Course, Lesson
 from courses.models import Payment
-from .validators import youtube_link_validator
+from .validators import validate_youtube_url
 
 
 class LessonSerializer(serializers.ModelSerializer):
+    video_link = serializers.URLField(validators=[validate_youtube_url])
 
     class Meta:
         model = Lesson
-        fields = ['id', 'name', 'description', 'preview', 'video_link', 'course']
+        fields = ['title', 'content', 'course', 'owner', 'video_link']
 
 
 
@@ -29,14 +30,4 @@ class PaymentSerializer(serializers.ModelSerializer):
         model = Payment
         fields = '__all__'
 
-class PaymentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Payment
-        fields = '__all__'
 
-class LessonSerializer(serializers.ModelSerializer):
-    video_url = serializers.URLField(validators=[youtube_link_validator])
-
-    class Meta:
-        model = Lesson
-        fields = ['id', 'title', 'description', 'video_url', 'course']

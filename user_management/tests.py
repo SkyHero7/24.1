@@ -2,28 +2,29 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
-from courses.models import Lesson
+from courses.models import Lesson, Course
+from user_management.models import CustomUser
 
 
-class LessonAPITest(TestCase):
+class APITest(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.lesson_data = {'title': 'Test Lesson', 'description': 'Test Description'}
-        self.lesson = Lesson.objects.create(title='Test Lesson', description='Test Description')
+        self.user = CustomUser.objects.create_user(email='test@example.com', password='password', phone='123456789', city='City')
+        self.client.force_authenticate(user=self.user)
+        self.course = Course.objects.create(title='Test Course', description='Test Description', owner=self.user)
+        self.lesson = Lesson.objects.create(title='Test Lesson', content='Test Content', course=self.course, owner=self.user, video_link='https://www.youtube.com/watch?v=example')
 
-    def test_create_lesson(self):
-        response = self.client.post(reverse('lesson-list'), self.lesson_data)
+    def test_create_course(self):
+        data = {'title': 'New Course', 'description': 'New Description', 'owner': self.user.id}
+        response = self.client.post(reverse('course-list'), data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_retrieve_lesson(self):
-        response = self.client.get(reverse('lesson-detail', args=[self.lesson.id]))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    def test_create_lesson(self):
+        data = {'title': 'New Lesson', 'content': 'New Content', 'course': self.course.id, 'owner': self.user.id, 'video_link': 'https://www.youtube.com/watch?v=new'}
+        response = self.client.post(reverse('lesson-list'), data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_update_lesson(self):
-        updated_data = {'title': 'Updated Test Lesson'}
-        response = self.client.put(reverse('lesson-detail', args=[self.lesson.id]), updated_data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_delete_lesson(self):
-        response = self.client.delete(reverse('lesson-detail', args=[self.lesson.id]))
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+    def test_invalid_video_link(self):
+        data = {'title': 'New Lesson', 'content': 'New Content', 'course': self.course.id, 'owner': self.user.id, 'video_link': 'https://www.invalid.com/watch?v=new'}
+        response = self.client.post(reverse('lesson-list'), data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

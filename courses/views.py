@@ -11,9 +11,6 @@ from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from user_management.permissions import IsOwner
 
-class CourseViewSet(viewsets.ModelViewSet):
-    queryset = Course.objects.all()
-    serializer_class = CourseSerializer
 
 class LessonListCreate(generics.ListCreateAPIView):
     queryset = Lesson.objects.all()
@@ -25,9 +22,6 @@ class LessonListCreate(generics.ListCreateAPIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class LessonRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Lesson.objects.all()
-    serializer_class = LessonSerializer
 
 class PaymentList(generics.ListAPIView):
     queryset = Payment.objects.all()
