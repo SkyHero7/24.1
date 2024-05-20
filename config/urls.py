@@ -15,6 +15,7 @@ urlpatterns = [
     path('', include('courses.urls', namespace='courses')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/users/', include('user_management.urls')),
     path('', include(router.urls)),
     path('api/', include('user_management.urls')),
     path('my-endpoint/', MyView.as_view(), name='my-endpoint'),

@@ -21,7 +21,6 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
         return self.create_user(email, password, **extra_fields)
 
-
 class CustomUser(AbstractBaseUser):
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15)
@@ -30,11 +29,15 @@ class CustomUser(AbstractBaseUser):
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['phone', 'city']
+
+    def __str__(self):
+        return self.email
 
 
 

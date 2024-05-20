@@ -8,7 +8,7 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissionsOrAnonReadOnly
 from .models import CustomUser
 from rest_framework import viewsets, permissions
-from user_management.permissions import IsModerator, IsOwnerOrReadOnly
+from user_management.permissions import IsModerator, IsOwnerOrReadOnly, IsModeratorOrReadOnly
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -18,14 +18,15 @@ from .models import Subscription
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_permissions(self):
-        if self.action in ['create', 'list']:
-            self.permission_classes = [IsAuthenticated, IsModerator]
+        if self.action in ['update', 'partial_update', 'destroy']:
+            permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+        elif self.action == 'list':
+            permission_classes = [IsAuthenticated, IsModeratorOrReadOnly]
         else:
-            self.permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
-        return super().get_permissions()
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
 
 
 
