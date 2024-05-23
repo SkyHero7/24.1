@@ -39,9 +39,12 @@ class CustomUser(AbstractBaseUser):
     def __str__(self):
         return self.email
 
-
-
 class Subscription(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey('courses.Course', on_delete=models.CASCADE)
 
+    class Meta:
+        unique_together = ['user', 'course']
+
+    def __str__(self):
+        return f'{self.user.email} -> {self.course.title}'

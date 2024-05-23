@@ -1,56 +1,26 @@
-from rest_framework.viewsets import ModelViewSet
-
-from courses.serializers import CourseSerializer, LessonSerializer
-from .paginators import CustomPageNumberPagination
-from .serializers import UserSerializer
-from courses.models import Course, Lesson
-from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated, DjangoModelPermissionsOrAnonReadOnly
-from .models import CustomUser
-from rest_framework import viewsets, permissions
-from user_management.permissions import IsModerator, IsOwnerOrReadOnly, IsModeratorOrReadOnly
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework import viewsets, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from .models import Subscription
+from .models import CustomUser, Subscription
+from .serializers import UserSerializer
+from .permissions import IsModerator, IsOwnerOrReadOnly, IsModeratorOrReadOnly
+from courses.models import Course, Lesson
+from courses.serializers import CourseSerializer
+from .paginators import CustomPageNumberPagination
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
-
-    def get_permissions(self):
-        if self.action in ['update', 'partial_update', 'destroy']:
-            permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
-        elif self.action == 'list':
-            permission_classes = [IsAuthenticated, IsModeratorOrReadOnly]
-        else:
-            permission_classes = [IsAuthenticated]
-        return [permission() for permission in permission_classes]
-
-
-
-
-class UserListView(APIView):
-    permission_classes = [IsAuthenticated | IsModerator]
-
-    def get(self, request):
-        if request.user.groups.filter(name='Модераторы').exists():
-             users = CustomUser.objects.all()
-        else:
-            users = CustomUser.objects.filter(id=request.user.id)
-
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
-
-class MyView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        user = request.user
-        return Response({'message': 'Этот эндпоинт закрыт авторизацией'})
-
-
+    def get_permissions(self):
+        if self.action in ['list']:
+            self.permission_classes = [IsAuthenticated, IsModeratorOrReadOnly]
+        elif self.action in ['retrieve', 'update', 'partial_update', 'destroy']:
+            self.permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+        return super().get_permissions()
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -67,6 +37,8 @@ class CourseViewSet(viewsets.ModelViewSet):
 
 
 class SubscriptionAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         user = request.user
         course_id = request.data.get('course_id')
@@ -81,25 +53,3 @@ class SubscriptionAPIView(APIView):
             message = 'Subscription removed successfully.'
 
         return Response({'message': message}, status=status.HTTP_200_OK)
-
-class UserListCreate(generics.ListCreateAPIView):
-    queryset = CustomUser.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
-
-class UserRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
-    queryset = CustomUser.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
-
-class LessonViewSet(viewsets.ModelViewSet):
-    queryset = Lesson.objects.all()
-    serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_permissions(self):
-        if self.action in ['create', 'list']:
-            self.permission_classes = [IsAuthenticated, IsModerator]
-        else:
-            self.permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
-        return super().get_permissions()

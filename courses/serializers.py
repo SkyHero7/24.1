@@ -5,24 +5,18 @@ from .validators import validate_youtube_url
 
 
 class LessonSerializer(serializers.ModelSerializer):
-    video_link = serializers.URLField(validators=[validate_youtube_url])
+    video_url = serializers.URLField(validators=[validate_youtube_url])
 
     class Meta:
         model = Lesson
-        fields = ['title', 'content', 'course', 'owner', 'video_link']
-
-
+        fields = '__all__'
 
 class CourseSerializer(serializers.ModelSerializer):
     lessons = LessonSerializer(many=True, read_only=True)
-    lessons_count = serializers.SerializerMethodField()
-
-    def get_lessons_count(self, course):
-        return course.lessons.count()
 
     class Meta:
         model = Course
-        fields = ['id', 'name', 'description', 'lessons', 'lessons_count']
+        fields = '__all__'
 
 
 class PaymentSerializer(serializers.ModelSerializer):

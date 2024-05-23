@@ -1,4 +1,5 @@
 from rest_framework import generics, viewsets, permissions
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -9,7 +10,7 @@ from .models import Payment
 from .serializers import PaymentSerializer
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from user_management.permissions import IsOwner
+from user_management.permissions import IsOwner, IsModerator, IsOwnerOrReadOnly
 
 
 class LessonListCreate(generics.ListCreateAPIView):
@@ -53,3 +54,15 @@ class PaymentList(generics.ListAPIView):
     serializer_class = PaymentSerializer
     ordering_fields = ['payment_date']
     filterset_fields = ['course', 'lesson', 'payment_method']
+
+class LessonViewSet(viewsets.ModelViewSet):
+    queryset = Lesson.objects.all()
+    serializer_class = LessonSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action in ['create', 'list']:
+            self.permission_classes = [IsAuthenticated, IsModerator]
+        else:
+            self.permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+        return super().get_permissions()
