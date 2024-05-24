@@ -1,10 +1,5 @@
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
 from django.db import models
-from courses.models import Course
-from user_management.serializers import UserSerializer
-
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -29,22 +24,12 @@ class CustomUser(AbstractBaseUser):
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
 
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['phone', 'city']
 
-    def __str__(self):
-        return self.email
-
 class Subscription(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     course = models.ForeignKey('courses.Course', on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ['user', 'course']
-
-    def __str__(self):
-        return f'{self.user.email} -> {self.course.title}'

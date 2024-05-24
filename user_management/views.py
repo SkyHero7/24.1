@@ -4,11 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import CustomUser, Subscription
 from .serializers import UserSerializer
-from .permissions import IsModerator, IsOwnerOrReadOnly, IsModeratorOrReadOnly
-from courses.models import Course, Lesson
-from courses.serializers import CourseSerializer
-from .paginators import CustomPageNumberPagination
-
+from .permissions import IsModeratorOrReadOnly, IsOwnerOrReadOnly
+from courses.models import Course
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
@@ -21,20 +18,6 @@ class UserViewSet(viewsets.ModelViewSet):
         elif self.action in ['retrieve', 'update', 'partial_update', 'destroy']:
             self.permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
         return super().get_permissions()
-
-
-class CourseViewSet(viewsets.ModelViewSet):
-    queryset = Course.objects.all()
-    serializer_class = CourseSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_permissions(self):
-        if self.action in ['create', 'list']:
-            self.permission_classes = [IsAuthenticated, IsModerator]
-        else:
-            self.permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
-        return super().get_permissions()
-
 
 class SubscriptionAPIView(APIView):
     permission_classes = [IsAuthenticated]
