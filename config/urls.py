@@ -1,24 +1,22 @@
-from django.contrib import admin
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from user_management.views import SubscriptionAPIView, UserViewSet
-
-router = DefaultRouter()
-router.register(r'users', UserViewSet, basename='user')
-
-
+from django.urls import path
+from user_management.views import (
+    UserListView,
+    SubscriptionAPIView,
+    UserListCreate,
+    UserRetrieveUpdateDestroy,
+    SendVerificationEmailView,
+    VerifyEmailView,
+    CustomTokenObtainPairView,
+    CustomTokenRefreshView
+)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('user_management/', include('user_management.urls', namespace='user_management')),
-    path('courses/', include('courses.urls', namespace='courses')),
-    path('', include('user_management.urls', namespace='users')),
-    path('', include('courses.urls', namespace='courses')),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/users/', include('user_management.urls')),
-    path('', include(router.urls)),
+    path('users/', UserListView.as_view(), name='user-list'),
     path('subscribe/', SubscriptionAPIView.as_view(), name='subscribe'),
-
+    path('users/create/', UserListCreate.as_view(), name='user-create'),
+    path('users/<int:pk>/', UserRetrieveUpdateDestroy.as_view(), name='user-detail'),
+    path('send-verification-email/', SendVerificationEmailView.as_view(), name='send-verification-email'),
+    path('verify-email/<str:token>/', VerifyEmailView.as_view(), name='verify-email'),
+    path('token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
 ]
