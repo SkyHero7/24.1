@@ -5,6 +5,9 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.urls import reverse
 
+from courses.models import Course
+
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -65,5 +68,12 @@ class Moderator(models.Model):
     can_delete = models.BooleanField(default=False)
 
 class Subscription(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    course = models.ForeignKey('courses.Course', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'course')
+
+    def __str__(self):
+        return f'{self.user.email} subscribed to {self.course.name}'

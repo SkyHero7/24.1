@@ -10,13 +10,19 @@ from user_management.permissions import IsOwnerOrReadOnly, IsModeratorOrReadOnly
 class CourseListCreate(generics.ListCreateAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsModeratorOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     pagination_class = CustomPageNumberPagination
+
+    def get_serializer_context(self):
+        return {'request': self.request}
 
 class CourseRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+    def get_serializer_context(self):
+        return {'request': self.request}
 
 class LessonListCreate(generics.ListCreateAPIView):
     queryset = Lesson.objects.all()

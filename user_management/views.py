@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -21,12 +22,10 @@ class UserViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
 class SubscriptionAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
     def post(self, request):
         user = request.user
         course_id = request.data.get('course_id')
-        course = Course.objects.get(pk=course_id)
+        course = get_object_or_404(Course, pk=course_id)
 
         subscription, created = Subscription.objects.get_or_create(user=user, course=course)
 
