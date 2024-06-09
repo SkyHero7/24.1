@@ -1,4 +1,6 @@
 from django.shortcuts import get_object_or_404
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -22,6 +24,24 @@ class UserViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
 class SubscriptionAPIView(APIView):
+    @swagger_auto_schema(
+        operation_description="Subscribe or unsubscribe from a course",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'course_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='Course ID')
+            }
+        ),
+        responses={
+            200: openapi.Response('Successful operation', openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'message': openapi.Schema(type=openapi.TYPE_STRING)
+                }
+            )),
+            404: openapi.Response('Course not found'),
+        }
+    )
     def post(self, request):
         user = request.user
         course_id = request.data.get('course_id')

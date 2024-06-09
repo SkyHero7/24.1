@@ -9,7 +9,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ['id', 'name', 'description', 'is_subscribed']
+        fields = ['id', 'name', 'description', 'price',  'is_subscribed']
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request', None)
