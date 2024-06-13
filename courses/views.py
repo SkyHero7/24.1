@@ -34,3 +34,12 @@ class LessonRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsOwnerOrReadOnly]
+
+class CourseUpdateView(generics.UpdateAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+
+        user_emails = [user.email for user in instance.subscribed_users.all()]

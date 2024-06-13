@@ -9,8 +9,9 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-from datetime import timedelta
 from pathlib import Path
+
+from celery.schedules import crontab
 from dotenv import load_dotenv
 import os
 
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'drf_yasg',
     'payments',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -168,3 +170,17 @@ SWAGGER_SETTINGS = {
 
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 FRONTEND_URL = 'http://localhost:3000'
+
+CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
+CELERY_BEAT_SCHEDULE = {
+    'run-periodic-task': {
+        'task': 'myproject.tasks.periodic_task',
+        'schedule': crontab(minute=0, hour=0),
+    },
+}
