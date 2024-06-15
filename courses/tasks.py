@@ -6,6 +6,9 @@ from celery import shared_task
 from django.core.mail import send_mail
 from django.conf import settings
 
+from user_management.models import CustomUser
+
+
 @shared_task
 def send_course_update_email(course_id, user_emails):
     subject = 'Course Updated'
@@ -15,9 +18,10 @@ def send_course_update_email(course_id, user_emails):
     send_mail(subject, message, email_from, user_emails)
 
 @shared_task
-def periodic_task():
-
-    pass
+def check_last_login():
+    one_month_ago = timezone.now() - timedelta(days=30)
+    users_to_deactivate = CustomUser.objects.filter(last_login__lt=one_month_ago, is_active=True)
+    users_to_deactivate.update(is_active=False)
 
 def deactivate_inactive_users():
     User = get_user_model()
